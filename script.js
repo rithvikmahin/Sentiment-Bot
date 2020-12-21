@@ -1,5 +1,6 @@
 const Discord = require('discord.js');
 const config = require('./config.json');
+const axios = require('axios');
 
 const client = new Discord.Client();
 
@@ -24,9 +25,12 @@ client.on('message', (message) => {
         
         message.reply('Enter the text to be analyzed.');
 
-        collector.on('collect', (text) => {
-            // Call sentiment analysis with text
-            message.reply(text);
+        collector.on('collect', async(text) => {
+            let sentiment = await axios.post(`http://127.0.0.1:5000/sentiment`, {
+                text: text
+            });
+            sentiment = sentiment.data;
+            message.reply(sentiment);
             collector.stop();
         });
     }
